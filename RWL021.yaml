@@ -3,7 +3,7 @@ blueprint:
   description: |
     Control lights with a Philips Hue Dimmer Switch RWL021 (EU).
   domain: automation
-  source_url: https://gist.github.com/YpsilonTM/1269c69ced0c801dc6098cd96af158e4
+  source_url: https://github.com/YpsilonTM/homeassistant-blueprints/blob/master/RWL021.yaml
 
   # Define the inputs for the blueprint
   input:
