@@ -1,0 +1,74 @@
+blueprint:
+  name: Ypsilon - Smart Charging
+  description: >
+    Automatically turns the socket on and off for charging.
+  domain: automation
+  input:
+    charge_socket:
+      name: Charging Socket/Switch
+      description: "The socket where your charger is plugged in"
+      selector:
+        entity:
+          domain:
+            - switch
+          multiple: false
+    battery_level:
+      name: Battery Level
+      description: "Battery level sensor from the Home Assistant companion app on your phone"
+      selector:
+        entity:
+          domain:
+            - sensor
+          multiple: false
+    min_battery_level:
+      name: Minimum Battery Level
+      description: "Minimum battery level at which charging turns on"
+      default: 20
+      selector:
+        number:
+          min: 0.0
+          max: 40.0
+          step: 1.0
+          mode: slider
+          unit_of_measurement: "%"
+    max_battery_level:
+      name: Maximum Battery Level
+      description: "Maximum battery level after which scheduled charging won’t turn on"
+      default: 80
+      selector:
+        number:
+          min: 60.0
+          max: 100.0
+          step: 1.0
+          mode: slider
+          unit_of_measurement: "%"
+
+trigger:
+  - trigger: state
+    entity_id: !input battery_level
+
+condition: []
+
+action:
+  - choose:
+      - conditions:
+          - condition: numeric_state
+            entity_id: !input battery_level
+            above: !input max_battery_level
+        sequence:
+          - action: switch.turn_off
+            metadata: {}
+            data: {}
+            target:
+              entity_id: !input charge_socket
+      - conditions:
+          - condition: numeric_state
+            entity_id: !input battery_level
+            below: !input min_battery_level
+        sequence:
+          - action: switch.turn_on
+            metadata: {}
+            data: {}
+            target:
+              entity_id: !input charge_socket
+mode: single
