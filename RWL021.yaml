@@ -1,0 +1,169 @@
+blueprint:
+  name: Ypsilon - Philips Hue Dimmer Switch with Hue Bridge
+  description: |
+    Control lights with a Philips Hue Dimmer Switch RWL021 (EU).
+  domain: automation
+  source_url: https://gist.github.com/YpsilonTM/1269c69ced0c801dc6098cd96af158e4
+
+  # Define the inputs for the blueprint
+  input:
+    dimmer_device:
+      name: Dimmer Remote Device
+      description: Your Hue dimmer.
+      selector:
+        device:
+          integration: hue
+          multiple: false
+          model: Hue dimmer switch
+
+    # Input On
+    button_on_short_press:
+      name: On Button - Short Press
+      description: Action to run on short on button press.
+      default: []
+      selector:
+        action:
+    button_on_long_press:
+      name: On Button - Long Press
+      description: Action to run on long on button press.
+      default: []
+      selector:
+        action:
+
+    # Input More Brightness
+    button_up_short_press:
+      name: Brightness Up Button - Short Press
+      description: Action to run on short brightness up button press.
+      default: []
+      selector:
+        action:
+    button_up_long_press:
+      name: Brightness Up Button - Long Press
+      description: Action to run on long brightness up button press.
+      default: []
+      selector:
+        action:
+
+    # Input Less Brightness
+    button_down_short_press:
+      name: Brightness Down Button - Short Press
+      description: Action to run on short brightness down button press.
+      default: []
+      selector:
+        action:
+    button_down_long_press:
+      name: Brightness Down Button - Long Press
+      description: Action to run on long brightness down button press.
+      default: []
+      selector:
+        action:
+
+    # Input Off
+    button_off_short_press:
+      name: Off Button - Short Press
+      description: Action to run on short off button press.
+      default: []
+      selector:
+        action:
+    button_off_long_press:
+      name: Off Button - Long Press
+      description: Action to run on long off button press.
+      default: []
+      selector:
+        action:
+
+mode: parallel
+max_exceeded: silent
+
+trigger:
+  - device_id: !input dimmer_device
+    domain: hue
+    platform: device
+    type: initial_press
+    subtype: 1
+    id: on short
+  - device_id: !input dimmer_device
+    domain: hue
+    platform: device
+    type: long_release
+    subtype: 1
+    id: on long
+
+  - device_id: !input dimmer_device
+    domain: hue
+    platform: device
+    type: initial_press
+    subtype: 2
+    id: up short
+  - device_id: !input dimmer_device
+    domain: hue
+    platform: device
+    type: long_release
+    subtype: 2
+    id: up long
+
+  - device_id: !input dimmer_device
+    domain: hue
+    platform: device
+    type: initial_press
+    subtype: 3
+    id: down short
+  - device_id: !input dimmer_device
+    domain: hue
+    platform: device
+    type: long_release
+    subtype: 3
+    id: down long
+
+  - device_id: !input dimmer_device
+    domain: hue
+    platform: device
+    type: initial_press
+    subtype: 4
+    id: off short
+  - device_id: !input dimmer_device
+    domain: hue
+    platform: device
+    type: long_release
+    subtype: 4
+    id: off long
+
+condition: []
+
+action:
+  - choose:
+      - conditions:
+          - condition: trigger
+            id: on short
+        sequence: !input button_on_short_press
+      - conditions:
+          - condition: trigger
+            id: on long
+        sequence: !input button_on_long_press
+
+      - conditions:
+          - condition: trigger
+            id: up short
+        sequence: !input button_up_short_press
+      - conditions:
+          - condition: trigger
+            id: up long
+        sequence: !input button_up_long_press
+
+      - conditions:
+          - condition: trigger
+            id: down short
+        sequence: !input button_down_short_press
+      - conditions:
+          - condition: trigger
+            id: down long
+        sequence: !input button_down_long_press
+
+      - conditions:
+          - condition: trigger
+            id: off short
+        sequence: !input button_off_short_press
+      - conditions:
+          - condition: trigger
+            id: off long
+        sequence: !input button_off_long_press
